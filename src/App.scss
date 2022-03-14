@@ -1,0 +1,31 @@
+.todo {
+  align-items: center;
+  display: flex;
+  font-size: 18px;
+  justify-content: space-between;
+
+}
+
+.formStyle {
+  display: flex;
+  margin-bottom: 20px;
+
+  .input {
+    width: 400px;
+  }
+
+  .button-area {
+    margin-bottom: 0px;
+    margin-top: 30px;
+    margin-left: 20px;
+    font-weight: 700;
+
+
+  }
+}
+
+
+.app {
+  padding: 30px;
+  background-color: floralwhite;
+}
