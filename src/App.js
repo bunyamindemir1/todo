@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import "./App.scss";
 import {Button, Card, Form} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -104,20 +104,25 @@ function App() {
         setTodos(newTodos);
     };
 
-    const markTodo = index => {
+    const markTodo = (index, id) => {
         const newTodos = [...todos];
         newTodos[index].isDone = true;
+        doneApi(id);
+        setTodos(newTodos);
+    };
+
+    const doneApi = (id) => {
         const data = JSON.stringify({
-            "done": true
+            "isDone": 1
         });
 
         const config = {
             method: 'get',
-            url: 'http://127.0.0.1:8000/api/todo/5/edit/',
+            url: 'http://127.0.0.1:8000/api/todo/' + id + '/edit/',
             headers: {
                 'Content-Type': 'application/json'
             },
-            data : data
+            data: data
         };
 
         axios(config)
@@ -128,14 +133,40 @@ function App() {
                 console.log(error);
             });
 
-        setTodos(newTodos);
     };
 
-    const removeTodo = index => {
+    const deleteApi = (id) => {
+
+        const data = JSON.stringify({});
+
+        const config = {
+            method: 'DELETE',
+            url: 'http://127.0.0.1:8000/api/todo/' + id + '/',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+
+    const [deleteId, setDeleteId] = useState();
+    const removeTodo = (index, id) => {
         const newTodos = [...todos];
         newTodos.splice(index, 1);
+        setDeleteId(id);
         setTodos(newTodos);
+        deleteApi(id);
     };
+
 
     return (
         <div className="app">
@@ -150,8 +181,8 @@ function App() {
                                     key={index}
                                     index={index}
                                     todo={todo}
-                                    markTodo={markTodo}
-                                    removeTodo={removeTodo}
+                                    markTodo={() => markTodo(index, todo.id)}
+                                    removeTodo={() => removeTodo(index, todo.id)}
                                 />
                             </Card.Body>
                         </Card>
