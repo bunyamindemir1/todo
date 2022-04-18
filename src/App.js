@@ -7,10 +7,7 @@ import axios from "axios";
 
 function Todo({todo, index, markTodo, removeTodo}) {
     return (
-        <div
-            className="todo"
-
-        >
+        <div className="todo">
             <span style={{textDecoration: todo.isDone ? "line-through" : ""}} className={''}>{todo.text}</span>
             <div>
                 <Button variant="outline-success" onClick={() => markTodo(index)}>✓</Button>{' '}
@@ -21,7 +18,8 @@ function Todo({todo, index, markTodo, removeTodo}) {
 }
 
 function FormTodo({addTodo}) {
-    const [value, setValue] = React.useState("");
+    const [value, setValue] = useState("");
+    const [subUsers, setSubUsers] = useState([]);
 
 
     const handleSubmit = e => {
@@ -35,7 +33,7 @@ function FormTodo({addTodo}) {
 
         const config = {
             method: 'post',
-            url: 'http://127.0.0.1:8000/api/todo',
+            url: 'http://127.0.0.1:8000/api/store',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -53,6 +51,38 @@ function FormTodo({addTodo}) {
         setValue("");
     };
 
+
+
+
+
+
+
+
+
+    const subUser = () => {
+
+        const config = {
+            method: 'get',
+            url: 'http://127.0.0.1:8000/api/user-list',
+            headers: {
+                'Accept-Language': 'application/json',
+            }
+        };
+
+        axios(config)
+            .then((item) => {
+                setSubUsers(item.data);
+
+            })
+        addTodo(subUsers);
+
+
+    }
+
+    useEffect(() => {
+        subUser();
+    }, [])
+
     return (
 
         <Form onSubmit={handleSubmit}>
@@ -62,6 +92,14 @@ function FormTodo({addTodo}) {
                     <Form.Control type="text" className="input" value={value} onChange={e => setValue(e.target.value)}
                                   placeholder="Yeni Ekle "/>
                 </Form.Group>
+                <div>
+                    <Form.Label><b>User</b></Form.Label>
+                    <select name="user_id" id="subuser" className={"form-control"}>
+                        {subUsers.map( (setSubUsers,index)=>
+                            <option key={index}>{setSubUsers}</option>
+                        )}
+                    </select>
+                </div>
                 <Button className={'button-area'} variant="primary " type="submit">
                     +
                 </Button>
@@ -181,6 +219,7 @@ function App() {
                                     key={index}
                                     index={index}
                                     todo={todo}
+
                                     markTodo={() => markTodo(index, todo.id)}
                                     removeTodo={() => removeTodo(index, todo.id)}
                                 />
